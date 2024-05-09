@@ -1,31 +1,27 @@
 import './App.css';
 import React from 'react';
-import { useEffect } from 'react';
-import { useState } from 'react';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FaArrowUp} from 'react-icons/fa';
 import { FaArrowDown } from 'react-icons/fa';
 
 function App() {
 
 
-const [sessionLength, setSessionLength] = React.useState(25);
-const [breakLength, setBreakLength] = React.useState(5);
+const [sessionLength, setSessionLength] = useState(25);
+const [breakLength, setBreakLength] = useState(5);
 
-const [isPlaying, setIsPlaying] = React.useState(false);
-const [isPaused, setIsPaused] = React.useState(false);
+const [isPlaying, setIsPlaying] = useState(false);
+const [isPaused, setIsPaused] = useState(false);
 
-const [currentSec, setCurrentSec] = React.useState(25*60);
+const [currentSec, setCurrentSec] = useState(25*60);
 
-const [intervalID, setIntervalID] = React.useState(null);
+const [intervalID, setIntervalID] = useState(null);
 
-const [timerTitle, setTimerTitle] = React.useState("Session");
+const [timerTitle, setTimerTitle] = useState("Session");
 
 const audioRef = useRef(null);
 
-const [counter, setCounter] = React.useState(0);
-
-React.useEffect(() => {
+useEffect(() => {
   if(currentSec === 0){
     audioRef.current.play();
     if(timerTitle === "Session"){
@@ -40,7 +36,7 @@ console.log('currentSec', currentSec)
 console.log('timerTitle', timerTitle)
 console.log('breakLength', breakLength)
 console.log('sessionLength', sessionLength)
-}, [currentSec, timerTitle]);
+}, [currentSec, timerTitle, breakLength, sessionLength]);
 
 const playTimer = () => {
   console.log(isPlaying)
@@ -75,22 +71,22 @@ const handleReset = () => {
   audioRef.current.currentTime = 0;
 };
 
-const formattedTime = () => {
-  let seconds = currentSec % 60;
-  let minutes = (currentSec - seconds) / 60;
+const formattedTime = (sec) => {
+  let seconds = sec % 60;
+  let minutes = (sec - seconds) / 60;
   seconds = (seconds < 10) ? `0${seconds}` : seconds;  
   minutes = (minutes < 10) ? `0${minutes}` : minutes;    
   return `${minutes}:${seconds}`;
 }
 
 const handleIncreaseBreak = () => {
-  if(counter === 0 && !isPlaying && !isPaused && breakLength < 60){
+  if(!isPlaying && !isPaused && breakLength < 60){
     setBreakLength(breakLength + 1);
   }
 };
 
 const  handleDecreaseBreak = () => {
-  if(counter === 0 && !isPlaying && !isPaused && breakLength > 1){
+  if(!isPlaying && !isPaused && breakLength > 1){
     setBreakLength(breakLength - 1);
   }
 };
@@ -144,7 +140,7 @@ return (
             {title}
             </div>
             <div id="time-left">
-            {formattedTime()}
+            {formattedTime(currentSec)}
             </div>
         </div>
         <div id="timer-control">
